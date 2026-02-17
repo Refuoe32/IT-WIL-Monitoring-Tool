@@ -1,0 +1,120 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.03) 0%, transparent 70%);
+    top: -300px;
+    right: -300px;
+}
+
+.login-box {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 3rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px var(--shadow), 0 0 0 1px var(--border);
+    position: relative;
+    z-index: 1;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-logo {
+    width: 80px;
+    height: 80px;
+    background: var(--bg-primary);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+}
+
+.login-header h1 {
+    font-size: 1.875rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.login-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.role-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.role-option input[type="radio"] {
+    display: none;
+}
+
+.role-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.25rem 0.75rem;
+    background: #fafafa;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.role-label .icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    filter: grayscale(100%);
+}
+
+.role-label span {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.role-option input[type="radio"]:checked + .role-label {
+    background: var(--bg-primary);
+    border-color: var(--bg-primary);
+    transform: translateY(-2px);
+}
+
+.role-option input[type="radio"]:checked + .role-label span {
+    color: var(--text-inverse);
+}
+
+.role-option input[type="radio"]:checked + .role-label .icon {
+    filter: grayscale(100%) brightness(10);
+}
+
+@media (max-width: 640px) {
+    .login-box {
+        padding: 2rem;
+    }
+    
+    .role-selector {
+        grid-template-columns: 1fr;
+    }
+}
