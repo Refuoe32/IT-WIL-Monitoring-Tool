@@ -34,7 +34,7 @@ const generateToken = () => {
 
 // ── Register a new user
 export const registerUser = (userData) => {
-  const { idNumber, password, role, fullName, email, inviteCode } = userData;
+  const { idNumber, password, role, fullName, email, employeeNumber } = userData;
 
   // Duplicate ID check
   if (memoryDB.users.find(u => u.id === idNumber.trim())) {
@@ -46,12 +46,14 @@ export const registerUser = (userData) => {
     return { success: false, error: 'An account with this email already exists.' };
   }
 
-  // Invite code enforcement for privileged roles
-  if (role === 'supervisor' && inviteCode !== 'SUP-WIL-2024') {
-    return { success: false, error: 'Invalid supervisor invite code.' };
+  // Employee number required for staff roles
+  if (role !== 'student' && !employeeNumber?.trim()) {
+    return { success: false, error: 'Employee number is required for staff accounts.' };
   }
-  if (role === 'coordinator' && inviteCode !== 'COO-ADMIN-2024') {
-    return { success: false, error: 'Invalid coordinator invite code.' };
+
+  // Duplicate employee number check (staff only)
+  if (role !== 'student' && memoryDB.users.find(u => u.employeeNumber === employeeNumber.trim())) {
+    return { success: false, error: 'This employee number is already registered.' };
   }
 
   const newUser = {
@@ -60,6 +62,7 @@ export const registerUser = (userData) => {
     role,
     name: fullName.trim(),
     email: email.trim().toLowerCase(),
+    ...(role !== 'student' && { employeeNumber: employeeNumber.trim() }),
     createdAt: new Date().toISOString(),
   };
 
@@ -88,6 +91,7 @@ export const loginUser = (idNumber, password, expectedRole) => {
     name: user.name,
     email: user.email,
     role: user.role,
+    ...(user.employeeNumber && { employeeNumber: user.employeeNumber }),
     token: generateToken(),
     expiresAt: Date.now() + 8 * 60 * 60 * 1000, // 8 hours
   };

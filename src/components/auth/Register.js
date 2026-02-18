@@ -11,9 +11,9 @@ const Register = ({ onSwitchToLogin }) => {
     fullName: '',
     email: '',
     idNumber: '',
+    employeeNumber: '',
     password: '',
     confirmPassword: '',
-    inviteCode: '',
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -32,15 +32,15 @@ const Register = ({ onSwitchToLogin }) => {
       if (!formData.fullName.trim()) errs.fullName = 'Full name is required.';
       if (!formData.email.includes('@')) errs.email = 'Enter a valid email address.';
       if (!formData.idNumber.trim()) errs.idNumber = 'ID number is required.';
+      if (formData.role !== 'student' && !formData.employeeNumber.trim()) {
+        errs.employeeNumber = 'Employee number is required.';
+      }
     }
     if (step === 2) {
       if (formData.password.length < 8) errs.password = 'Password must be at least 8 characters.';
       if (!/[A-Z]/.test(formData.password)) errs.password = 'Password must include an uppercase letter.';
       if (!/[0-9]/.test(formData.password)) errs.password = 'Password must include a number.';
       if (formData.password !== formData.confirmPassword) errs.confirmPassword = 'Passwords do not match.';
-      if (formData.role !== 'student' && !formData.inviteCode.trim()) {
-        errs.inviteCode = 'Invite code is required for this role.';
-      }
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -190,11 +190,36 @@ const Register = ({ onSwitchToLogin }) => {
                     <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
                   </svg>
                 </span>
-                <input className="field__input" placeholder="e.g. STU002" value={formData.idNumber}
-                  onChange={e => update('idNumber', e.target.value)} />
+                <input
+                  className="field__input"
+                  placeholder={formData.role === 'student' ? 'e.g. STU2024001' : 'e.g. STAFF2024001'}
+                  value={formData.idNumber}
+                  onChange={e => update('idNumber', e.target.value)}
+                />
               </div>
               {errors.idNumber && <span className="field__error">{errors.idNumber}</span>}
             </div>
+
+            {formData.role !== 'student' && (
+              <div className="field">
+                <label className="field__label">Employee Number</label>
+                <div className="field__wrap">
+                  <span className="field__icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                      <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd"/>
+                      <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                    </svg>
+                  </span>
+                  <input
+                    className="field__input"
+                    placeholder={formData.role === 'coordinator' ? 'e.g. EMP-COORD-001' : 'e.g. EMP-SUP-001'}
+                    value={formData.employeeNumber}
+                    onChange={e => update('employeeNumber', e.target.value)}
+                  />
+                </div>
+                {errors.employeeNumber && <span className="field__error">{errors.employeeNumber}</span>}
+              </div>
+            )}
 
             <button type="submit" className="auth-btn">Continue →</button>
           </form>
@@ -239,21 +264,6 @@ const Register = ({ onSwitchToLogin }) => {
               </div>
               {errors.confirmPassword && <span className="field__error">{errors.confirmPassword}</span>}
             </div>
-
-            {formData.role !== 'student' && (
-              <div className="field">
-                <label className="field__label">
-                  Invite Code <span className="field__badge">Required for {formData.role}</span>
-                </label>
-                <div className="field__wrap">
-                  <span className="field__icon">🔑</span>
-                  <input className="field__input" placeholder="Enter your institutional invite code"
-                    value={formData.inviteCode} onChange={e => update('inviteCode', e.target.value)} />
-                </div>
-                <span className="field__hint">Contact your administrator for the invite code.</span>
-                {errors.inviteCode && <span className="field__error">{errors.inviteCode}</span>}
-              </div>
-            )}
 
             {errors.submit && (
               <div className="auth-error">
